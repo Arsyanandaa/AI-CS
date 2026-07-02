@@ -35,9 +35,12 @@ def get_transaction_context(db: Session, user_id: int, invoice_id: str | None = 
 
     lines = []
     for t in transactions:
+        # KUNCI PERBAIKAN: Hapus '.value' setelah status_pembayaran karena tipe datanya str biasa
+        status_pembayaran_str = t.status_pembayaran if isinstance(t.status_pembayaran, str) else t.status_pembayaran.value
+        
         lines.append(
             f"- Invoice {t.invoice_id}: item_id={t.item_id}, "
-            f"total=Rp{t.total_harga}, status={t.status_pembayaran.value}, "
+            f"total=Rp{t.total_harga}, status={status_pembayaran_str}, "
             f"tanggal={t.created_at.strftime('%d-%m-%Y %H:%M')}"
         )
     return "Riwayat transaksi user:\n" + "\n".join(lines)

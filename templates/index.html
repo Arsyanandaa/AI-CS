@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GamePay Support</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .typing-dot {
+        animation: typing 1.4s infinite ease-in-out both;
+      }
+      .typing-dot:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+      .typing-dot:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+      @keyframes typing {
+        0%,
+        80%,
+        100% {
+          transform: scale(0);
+        }
+        40% {
+          transform: scale(1);
+        }
+      }
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-900 text-white h-screen flex justify-center items-center p-4 sm:p-8">
+    <div class="bg-slate-800 w-full max-w-2xl h-full sm:h-[90vh] rounded-2xl shadow-2xl flex flex-col border border-slate-700 overflow-hidden">
+      <header class="bg-slate-800 border-b border-slate-700 p-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="relative">
+            <div class="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">GP</div>
+            <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-800 rounded-full"></div>
+          </div>
+          <div>
+            <h1 class="text-base font-semibold text-slate-100">GamePay Support</h1>
+            <p class="text-xs text-slate-400">Agent kami siap membantu</p>
+          </div>
+        </div>
+      </header>
+
+      <main id="chat-box" class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6 bg-[#0f172a]">
+        <div class="flex justify-center">
+          <span class="text-[11px] bg-slate-700/50 text-slate-400 px-3 py-1 rounded-full">Hari Ini</span>
+        </div>
+        <div class="flex gap-3">
+          <div class="w-8 h-8 bg-indigo-500 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold shadow-md">GP</div>
+          <div class="flex flex-col gap-1 max-w-[80%]">
+            <div class="bg-slate-700 text-slate-100 p-3 rounded-2xl rounded-tl-none shadow-sm text-sm">Halo kak! Selamat datang di Layanan Bantuan GamePay. Ada yang bisa kami bantu hari ini?</div>
+            <span id="welcome-time" class="text-[11px] text-slate-500 ml-1"></span>
+          </div>
+        </div>
+      </main>
+
+      <footer class="bg-slate-800 p-4 border-t border-slate-700">
+        <form id="chat-form" class="flex items-end gap-2 relative">
+          <input
+            type="text"
+            id="user-input"
+            placeholder="Ketik pesan Anda di sini..."
+            class="flex-1 bg-slate-900 border border-slate-600 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 placeholder-slate-500 transition shadow-inner"
+            required
+            autocomplete="off"
+          />
+          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-xl transition shadow-lg flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+          </button>
+        </form>
+      </footer>
+    </div>
+
+    <script>
+      const chatForm = document.getElementById("chat-form");
+      const userInput = document.getElementById("user-input");
+      const chatBox = document.getElementById("chat-box");
+      let currentSessionId = null;
+
+      function getTime() {
+        const now = new Date();
+        return now.getHours().toString().padStart(2, "0") + ":" + now.getMinutes().toString().padStart(2, "0");
+      }
+      document.getElementById("welcome-time").innerText = getTime();
+
+      function appendUserMessage(text) {
+        const time = getTime();
+        const msgHTML = `<div class="flex gap-3 flex-row-reverse"><div class="flex flex-col gap-1 max-w-[80%] items-end"><div class="bg-indigo-600 text-white p-3 rounded-2xl rounded-tr-none text-sm">${text}</div><span class="text-[11px] text-slate-500 mr-1">${time}</span></div></div>`;
+        chatBox.insertAdjacentHTML("beforeend", msgHTML);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function appendAgentMessage(text) {
+        const time = getTime();
+        const cleanText = text.replace(/\*\*/g, "").replace(/\*/g, "");
+        const msgHTML = `<div class="flex gap-3"><div class="w-8 h-8 bg-indigo-500 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold">GP</div><div class="flex flex-col gap-1 max-w-[80%]"><div class="bg-slate-700 text-slate-100 p-3 rounded-2xl rounded-tl-none text-sm leading-relaxed">${cleanText}</div><span class="text-[11px] text-slate-500 ml-1">${time}</span></div></div>`;
+        chatBox.insertAdjacentHTML("beforeend", msgHTML);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function showTypingIndicator() {
+        const msgHTML = `<div id="typing-indicator" class="flex gap-3"><div class="w-8 h-8 bg-indigo-500 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold">GP</div><div class="flex flex-col gap-1 max-w-[80%]"><div class="bg-slate-700 p-4 rounded-2xl rounded-tl-none flex gap-1 items-center h-[44px]"><div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div><div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div><div class="w-2 h-2 bg-slate-400 rounded-full typing-dot"></div></div></div></div>`;
+        chatBox.insertAdjacentHTML("beforeend", msgHTML);
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }
+
+      function removeTypingIndicator() {
+        const indicator = document.getElementById("typing-indicator");
+        if (indicator) indicator.remove();
+      }
+
+      // Taruh fungsi fetch di luar biar global dan rapi, bro
+      async function sendMessageToBackend(messageText, sessionId = null) {
+        try {
+          const response = await fetch("http://127.0.0.1:8000/chat/send", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              session_id: sessionId,
+              message: messageText,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error("Detail Error Backend:", errorText);
+            return { error: true, detail: errorText };
+          }
+
+          return await response.json();
+        } catch (err) {
+          console.error("Gagal fetch data:", err);
+          return { error: true, detail: err.message };
+        }
+      }
+
+      // Logika form submit diperbaiki biar beneran manggil fungsi fetch
+      chatForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        appendUserMessage(message);
+        userInput.value = "";
+        showTypingIndicator();
+
+        // KUNCI PERBAIKAN: Di sini fungsi fetch dipanggil dan dieksekusi
+        const resData = await sendMessageToBackend(message, currentSessionId);
+
+        removeTypingIndicator();
+
+        if (resData && !resData.error) {
+          // Simpan session_id biar histori chat ngunci di satu percakapan
+          if (resData.session_id) {
+            currentSessionId = resData.session_id;
+          }
+          appendAgentMessage(resData.reply);
+        } else {
+          // Fallback kalau seandainya server lu down atau crash
+          appendAgentMessage("Gak ada respon dari backend, bro.");
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional, List
 from app.models.chat import SessionStatus, SenderType
@@ -10,12 +10,12 @@ class ChatRequest(BaseModel):
 
 
 class ChatMessageResponse(BaseModel):
+    # Menggunakan ConfigDict untuk Pydantic v2 tanpa nested class lawas
+    model_config = ConfigDict(from_attributes=True)
+    
     sender: SenderType
     message: str
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class ChatResponse(BaseModel):
@@ -26,10 +26,10 @@ class ChatResponse(BaseModel):
 
 
 class ChatSessionResponse(BaseModel):
+    # Menggunakan ConfigDict untuk Pydantic v2 tanpa nested class lawas
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     status: SessionStatus
     started_at: datetime
     messages: List[ChatMessageResponse] = []
-
-    class Config:
-        from_attributes = True
