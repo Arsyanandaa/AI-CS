@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import auth  # Import router auth
+from app.api import auth, games, transactions, chat
 from app.core.database import engine, Base
+from app.models import user, game, transaction, chat as chat_model  # noqa: F401
 
-# Otomatis bikin tabel di PostgreSQL kalau belum ada saat server start
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -20,8 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Hubungkan route authentication ke aplikasi utama
 app.include_router(auth.router)
+app.include_router(games.router)
+app.include_router(transactions.router)
+app.include_router(chat.router)
 
 @app.get("/")
 async def root():
