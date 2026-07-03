@@ -32,14 +32,14 @@ app.include_router(chat.router)
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
-    import os
-    
-    # Mendeteksi base directory proyek (AI CUSTOMER SERVICE) secara dinamis
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    html_path = os.path.join(base_dir, "templates", "index.html")
+    # Menggunakan pathlib untuk mengunci folder templates secara absolut dan aman
+    # Path(__file__).resolve() -> .../AI CUSTOMER SERVICE/app/main.py
+    # .parent.parent            -> .../AI CUSTOMER SERVICE/
+    base_dir = Path(__file__).resolve().parent.parent
+    html_path = base_dir / "templates" / "index.html"
     
     # Pengaman jika jalur file meleset, biar ga langsung Internal Server Error
-    if not os.path.exists(html_path):
+    if not html_path.exists():
         return f"""
         <div style="font-family: sans-serif; text-align: center; margin-top: 50px;">
             <h1 style="color: #ea580c;">🎮 GamePay CS-AI Core API</h1>
@@ -50,5 +50,4 @@ async def root():
         </div>
         """
         
-    with open(html_path, "r", encoding="utf-8") as f:
-        return f.read()
+    return html_path.read_text(encoding="utf-8")

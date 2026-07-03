@@ -42,13 +42,20 @@ def generate_reply(system_prompt: str, chat_history: list[dict], user_message: s
 
     try:
         response = requests.post(_get_endpoint(), json=payload, timeout=20)
+        
+        print(f"🔥 STATUS API: {response.status_code}")
+        print(f"🔥 BALASAN GOOGLE: {response.text}")
+        
         response.raise_for_status()
         data = response.json()
         return data["candidates"][0]["content"]["parts"][0]["text"]
     except requests.exceptions.HTTPError as http_err:
-        # Pengaman ekstra jika kuota gratisan 429 habis di kemudian hari
+        # Tambahin print juga di sini biar tahu kalau dia masuk ke HTTP Error
+        print(f"🚨 MASUK HTTP ERROR: {http_err}")
         if response.status_code == 429:
             return "Maaf kak, server AI kami sedang padat banget nih. Coba kirim pesan lagi dalam 1 menit ya!"
         return "Maaf kak, layanan otomatis kami sedang sibuk. Mohon tunggu sebentar ya."
-    except (KeyError, IndexError, Exception):
+    except (KeyError, IndexError, Exception) as e:
+        # Tambahin print juga di sini biar tahu kalau strukturnya yang salah
+        print(f"🚨 MASUK EXCEPTION LAIN: {e}")
         return "Maaf, sistem AI CS sedang mengalami gangguan. Pesan Anda akan dialihkan ke agen manusia."
